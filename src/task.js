@@ -4,8 +4,12 @@ export default class Task {
   _dueDate;
   _priority;
   _notes;
+  _isCompleted;
 
-  constructor(title) { this._title = title; }
+  constructor(title) {
+    this._title = title;
+    this._isCompleted = false;
+  }
 
   /*
    * SETTERS
@@ -34,5 +38,11 @@ export default class Task {
   getPriority() { return this._priority; }
 
   getNotes() { return this._notes; }
+
+  getIsCompleted() { return this._isCompleted; }
+
+  toggleStatus() {
+    this._isCompleted = this._isCompleted === false ? true : false;
+  }
 }
 
