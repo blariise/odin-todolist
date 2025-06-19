@@ -2,5 +2,39 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
+  --text-color: #DDDDDD;
+  --red: #F05454;
+  --main-darker: #110E1B;
+  --main-dark: #191528;
+  --task-info: #3C162F;
+}
+
+.container {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(max-content, 350px)
+                         minmax(max-content, 500px)
+                         minmax(max-content, 800px);
+  color: var(--text-color);
+  background-color: var(--main-darker);
+}
+
+.projects,
+.tasks,
+.task-info {
+  padding: 20px;
+}
+
+.projects {
+  background-color: var(--main-dark);
+}
+
+.tasks {
+  background-color: var(--main-darker);
+}
+
+.task-info {
+  background-color: var(--main-darker);
 }
 
