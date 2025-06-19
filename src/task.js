@@ -11,28 +11,28 @@ export default class Task {
    * SETTERS
   */
 
-  set title(title) { this._title = title; }
+  setTitle(title) { this._title = title; }
 
-  set description(description) { this._description = description; }
+  setDescription(description) { this._description = description; }
 
-  set dueDate(dueDate) { this._dueDate = dueDate; }
+  setDueDate(dueDate) { this._dueDate = dueDate; }
 
-  set priority(priority) { this._priority = priority; }
+  setPriority(priority) { this._priority = priority; }
 
-  set notes(notes) { this._notes = notes; }
+  setNotes(notes) { this._notes = notes; }
 
   /*
    * GETTERS
   */
 
-  get title() { return this._title; }
+  getTitle() { return this._title; }
 
-  get description() { return this._description; }
+  getDescription() { return this._description; }
 
-  get dueDate() { return this._dueDate; }
+  getDueDate() { return this._dueDate; }
 
-  get priority() { return this._priority; }
+  getPriority() { return this._priority; }
 
-  get notes() { return this._notes; }
+  getNotes() { return this._notes; }
 }
 
