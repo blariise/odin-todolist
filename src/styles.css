@@ -30,6 +30,42 @@
   background-color: var(--main-dark);
 }
 
+.add-project {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 6px;
+  color: var(--red);
+}
+
+.add-icon {
+  display: grid;
+  align-items: center;
+}
+
+.add-icon svg {
+  height: 2rem;
+  fill: var(--red);
+}
+
+.add-input {
+  display: grid;
+}
+
+.add-input input {
+  font-size: 1.5rem;
+  background-color: var(--main-dark);
+  border: 0;
+  color: var(--text-color);
+}
+
+.add-input input:focus-visible {
+  outline: none;
+}
+
+.add-input input::placeholder {
+  color: var(--red);
+}
+
 .tasks {
   background-color: var(--main-darker);
 }
