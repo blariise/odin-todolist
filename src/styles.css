@@ -13,7 +13,7 @@
 .container {
   height: 100vh;
   display: grid;
-  grid-template-columns: minmax(max-content, 350px)
+  grid-template-columns: max-content
                          minmax(max-content, 500px)
                          minmax(max-content, 800px);
   color: var(--text-color);
@@ -27,6 +27,10 @@
 }
 
 .projects {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  gap: 20px;
+
   background-color: var(--main-dark);
 }
 
@@ -64,6 +68,20 @@
 
 .add-input input::placeholder {
   color: var(--red);
+}
+
+.project {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.project:hover {
+  background-color: var(--main-darker);
+  cursor: pointer;
 }
 
 .tasks {
