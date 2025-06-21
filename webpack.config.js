@@ -36,6 +36,10 @@ module.exports = {
         test: /\.svg$/i,
         loader: "svg-inline-loader",
       },
+      {
+        test: /\.otf$/i,
+        type: "asset/resource",
+      },
     ],
   }
 };

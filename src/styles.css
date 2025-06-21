@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "TexGyreHeros";
+  src: url("./texgyreheros-bold.otf");
+}
+
 * { 
   margin: 0;
   padding: 0;
@@ -18,6 +23,8 @@
                          minmax(max-content, 800px);
   color: var(--text-color);
   background-color: var(--main-darker);
+
+  font-family: "TexGyreHeros";
 }
 
 .projects,
