@@ -80,6 +80,7 @@
 .project {
   display: grid;
   grid-template-columns: 1fr max-content;
+  justify-items: start;
   font-size: 0.9rem;
   font-weight: bold;
   padding: 4px;
@@ -89,6 +90,16 @@
 .project:hover {
   background-color: var(--main-darker);
   cursor: pointer;
+}
+
+.project-edit svg {
+  fill: #FFFFFF;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.project-edit svg:hover {
+  background-color: #06050A;
 }
 
 .tasks {

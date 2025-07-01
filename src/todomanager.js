@@ -5,7 +5,9 @@ export default class TodoManager {
 
   constructor() {}
 
-  addProject(projectTitle) {
-    this._projects.push(new Project(projectTitle));
-  }
+  addProject(projectTitle) { this._projects.push(new Project(projectTitle)); }
+
+  removeProject(projectId) { this._projects.splice(projectId, 1); }
+
+  getProjects() { return this._projects; }
 }
