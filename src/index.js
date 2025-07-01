@@ -11,6 +11,8 @@ const todoManager = new TodoManager();
   renderAddIcons();
   todoManager.addProject("Default");
   renderProjects();
+
+  addAddProjectEvent();
 })();
 
 function renderAddIcons() {
@@ -49,4 +51,16 @@ function renderProjects() {
     projectsDiv.appendChild(projectDiv);
   });
   renderProjectIcons();
+}
+
+function addAddProjectEvent(event) {
+  const addProjectDiv = document.querySelector(".add-input");
+  addProjectDiv.addEventListener("keydown", (event) => {
+    const projectTitle = document.querySelector("#project-name");
+    if (event.key === "Enter" && projectTitle.value !== "") {
+      todoManager.addProject(projectTitle.value);
+      projectTitle.value = "";
+      renderProjects();
+    }
+  });
 }
