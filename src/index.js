@@ -1,22 +1,21 @@
 import "./styles.css";
-
-import Task from "./task.js";
-import TodoList from "./todolist.js";
-
 import addIcon from "./add.svg";
 
 /*
  * INIT PAGE
 */
 (() => {
-  const defaultList = new TodoList("default");
-
-  initIcons();
+  renderIcons();
 })();
 
-function initIcons() {
+function renderIcons() {
   const addIconDivs = document.querySelectorAll(".add-icon");
   addIconDivs.forEach((addIconDiv) => {
     addIconDiv.innerHTML = addIcon;
   });
+}
+
+function renderProjects() {
+  const projectsDiv = document.querySelector(".projects-container");
+
 }
