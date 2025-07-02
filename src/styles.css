@@ -103,7 +103,42 @@
 }
 
 .tasks {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  gap: 25px;
   background-color: var(--main-darker);
+}
+
+.tasks .project-name {
+  justify-self: center;
+  font-size: 1.2rem;
+}
+
+.add-task {
+  max-width: 2rem;
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(2, max-content);
+  gap: 2px;
+}
+
+.add-task .add-icon svg {
+  height: 1.4rem;
+}
+
+.task-add-input input {
+  font-size: 1rem;
+  background-color: var(--main-darker);
+  border: 0;
+  color: var(--text-color);
+}
+
+.task-add-input input:focus-visible {
+  outline: none;
+}
+
+.add-input input::placeholder {
+  color: var(--red);
 }
 
 .task-info {
