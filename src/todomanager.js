@@ -10,4 +10,5 @@ export default class TodoManager {
   removeProject(projectId) { this._projects.splice(projectId, 1); }
 
   getProjects() { return this._projects; }
+  getProject(projectId) { return this._projects[projectId]; }
 }

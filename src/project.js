@@ -9,9 +9,9 @@ export default class Project {
   setTitle(title) { this._title = title; }
 
   getTitle() { return this._title; }
-  getTaskList() { return this._taskList; }
+  getTasks() { return this._taskList; }
 
-  addTask(task) { this._taskList.push(task); }
+  addTask(taskTitle) { this._taskList.push( new Task(taskTitle) ); }
   removeTask(taskId) { this._taskList.splice(taskId, 1); }
 }
 

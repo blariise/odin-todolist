@@ -104,12 +104,12 @@
 
 .tasks {
   display: grid;
-  grid-template-rows: max-content 1fr;
-  gap: 25px;
+  grid-template-rows: max-content max-content 1fr;
+  gap: 29px;
   background-color: var(--main-darker);
 }
 
-.tasks .project-name {
+.tasks .project-title {
   justify-self: center;
   font-size: 1.2rem;
 }
@@ -124,6 +124,7 @@
 
 .add-task .add-icon svg {
   height: 1.4rem;
+  fill: #
 }
 
 .task-add-input input {
@@ -137,7 +138,7 @@
   outline: none;
 }
 
-.add-input input::placeholder {
+.task-add-input input::placeholder {
   color: var(--red);
 }
 

@@ -7,12 +7,16 @@ import TodoManager from "./todomanager.js";
  * INIT PAGE
 */
 const todoManager = new TodoManager();
+let activeProjectId = 0;
 (() => {
   renderAddIcons();
   todoManager.addProject("Default");
   renderProjects();
+  renderTasks(activeProjectId);
 
   addAddProjectEvent();
+  setProjectClickEvent();
+  addAddTaskEvent();
 })();
 
 function renderAddIcons() {
@@ -53,7 +57,7 @@ function renderProjects() {
   renderProjectIcons();
 }
 
-function addAddProjectEvent(event) {
+function addAddProjectEvent() {
   const addProjectDiv = document.querySelector(".add-input");
   addProjectDiv.addEventListener("keydown", (event) => {
     const projectTitle = document.querySelector("#project-name");
@@ -63,4 +67,80 @@ function addAddProjectEvent(event) {
       renderProjects();
     }
   });
+}
+
+function addAddTaskEvent() {
+  const addTaskDiv = document.querySelector(".task-add-input");
+  addTaskDiv.addEventListener("keydown", (event) => {
+    const taskTitle = document.querySelector("#task-title");
+    if (event.key === "Enter" && taskTitle.value !== "") {
+      const project = todoManager.getProject(activeProjectId);
+      project.addTask(taskTitle.value);
+      taskTitle.value = "";
+      clearTasks();
+      renderTasks(activeProjectId);
+    }
+  });
+}
+
+function setProjectClickEvent() {
+  const projectsDiv = document.querySelector(".projects-container");
+  projectsDiv.addEventListener("click", (event) => {
+    const elementType = event.target;
+    const projectId = elementType.dataset.id;
+    if (elementType.classList.item(0) === "project") {
+      activeProjectId = projectId;
+      renderTasks(projectId);
+    } else if (elementType.tagName === "svg") {
+      console.log("edit");
+    }
+  });
+}
+
+function renderProjectTitleInTasks(project) {
+  const projectTitleDiv = document.querySelector(".project-title");
+  projectTitleDiv.textContent = project.getTitle();
+}
+
+function renderTasks(projectId) {
+  const tasksDiv = document.querySelector(".tasks");
+  const tasksContainerDiv = document.createElement("div");
+  tasksContainerDiv.classList.add("tasks-container");
+
+  const project = todoManager.getProject(projectId);
+  renderProjectTitleInTasks(project);
+
+  project.getTasks().forEach((task) => {
+    const taskDiv = createTaskDOM(task.getTitle());
+    tasksContainerDiv.appendChild(taskDiv);
+  });
+  tasksDiv.appendChild(tasksContainerDiv);
+}
+
+function clearTasks() {
+  const taskContainerDiv = document.querySelector(".tasks-container");
+  taskContainerDiv.remove();
+}
+
+function createTaskDOM(taskTitle) {
+  const div = document.createElement("div");
+  const taskDiv = document.createElement("div");
+  const taskStatusInputDiv = document.createElement("div");
+  const taskTitleDiv = document.createElement("div");
+
+  taskDiv.classList.add("task");
+  taskStatusInputDiv.classList.add("task-status");
+  taskTitleDiv.classList.add("task-title");
+
+  taskTitleDiv.textContent = taskTitle;
+
+  taskDiv.appendChild(taskStatusInputDiv);
+  taskDiv.appendChild(taskTitleDiv);
+  return taskDiv;
+}
+
+function hideIfActiveRemoved() {
+  activeProjectId = -1;
+  const tasksDiv = document.querySelector(".tasks");
+  tasksDiv.classList.add("hidden");
 }
