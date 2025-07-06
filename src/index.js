@@ -90,6 +90,7 @@ function setProjectClickEvent() {
     const projectId = elementType.dataset.id;
     if (elementType.classList.item(0) === "project") {
       activeProjectId = projectId;
+      clearTasks();
       renderTasks(projectId);
     } else if (elementType.tagName === "svg") {
       console.log("edit");
@@ -110,9 +111,11 @@ function renderTasks(projectId) {
   const project = todoManager.getProject(projectId);
   renderProjectTitleInTasks(project);
 
+  let taskIndex = 0;
   project.getTasks().forEach((task) => {
-    const taskDiv = createTaskDOM(task.getTitle());
+    const taskDiv = createTaskDOM(task.getTitle(), taskIndex);
     tasksContainerDiv.appendChild(taskDiv);
+    ++taskIndex;
   });
   tasksDiv.appendChild(tasksContainerDiv);
 }
@@ -122,20 +125,27 @@ function clearTasks() {
   taskContainerDiv.remove();
 }
 
-function createTaskDOM(taskTitle) {
-  const div = document.createElement("div");
+function createTaskDOM(taskTitle, taskIndex) {
   const taskDiv = document.createElement("div");
   const taskStatusInputDiv = document.createElement("div");
   const taskTitleDiv = document.createElement("div");
+  const taskRemoveDiv = document.createElement("div");
 
   taskDiv.classList.add("task");
   taskStatusInputDiv.classList.add("task-status");
   taskTitleDiv.classList.add("task-title");
+  taskRemoveDiv.classList.add("task-remove");
 
+  const taskStatus = document.createElement("input");
+  taskStatus.setAttribute("type", "checkbox");
+  taskStatus.setAttribute("id", `${taskIndex}`);
+  taskStatusInputDiv.appendChild(taskStatus);
   taskTitleDiv.textContent = taskTitle;
 
   taskDiv.appendChild(taskStatusInputDiv);
   taskDiv.appendChild(taskTitleDiv);
+  taskDiv.appendChild(taskRemoveDiv);
+  taskDiv.dataset.id = taskIndex;
   return taskDiv;
 }
 
