@@ -1,6 +1,7 @@
 import "./styles.css";
 import addIcon from "./add.svg";
 import editIcon from "./dots-vertical.svg";
+import deleteIcon from "./delete.svg";
 import TodoManager from "./todomanager.js";
 
 /*
@@ -31,6 +32,13 @@ function renderProjectIcons() {
   const editIconsDivs = document.querySelectorAll(".project-edit");
   editIconsDivs.forEach((editIconDiv) => {
     editIconDiv.innerHTML = editIcon;
+  });
+}
+
+function renderDeleteIcons() {
+  const deleteIconsDivs = document.querySelectorAll(".task-remove");
+  deleteIconsDivs.forEach((deleteIconDiv) => {
+    deleteIconDiv.innerHTML = deleteIcon;
   });
 }
 
@@ -138,6 +146,7 @@ function renderTasks(projectId) {
     ++taskIndex;
   });
   tasksDiv.appendChild(tasksContainerDiv);
+  renderDeleteIcons();
 }
 
 function clearTasks() {

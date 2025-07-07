@@ -104,6 +104,7 @@
 
 .tasks {
   display: grid;
+  min-width: 250px;
   grid-template-rows: max-content max-content 1fr;
   gap: 29px;
   background-color: var(--main-darker);
@@ -124,7 +125,6 @@
 
 .add-task .add-icon svg {
   height: 1.4rem;
-  fill: #
 }
 
 .task-add-input input {
@@ -158,6 +158,17 @@
   text-decoration: line-through;
   text-decoration-color: var(--red);
   text-decoration-thickness: 2px;
+}
+
+.task-remove {
+  display: grid;
+  align-items: center;
+}
+
+.task-remove svg {
+  fill: #FFFFFF;
+  height: 70%;
+  border-radius: 10px;
 }
 
 .task-info {
