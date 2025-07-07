@@ -17,6 +17,7 @@ let activeProjectId = 0;
   addAddProjectEvent();
   setProjectClickEvent();
   addAddTaskEvent();
+  addTaskStatusEvent();
 })();
 
 function renderAddIcons() {
@@ -98,6 +99,20 @@ function setProjectClickEvent() {
   });
 }
 
+function addTaskStatusEvent() {
+  const tasksDiv = document.querySelector(".tasks");
+  tasksDiv.addEventListener("click", (event) => {
+    const element = event.target;
+    if (element.classList.item(0) === "task-title") {
+      console.log("TASK");
+    } else if (element.classList.item(0) === "task-input-status") {
+      const project = todoManager.getProject(activeProjectId);
+      const task = project.getTask(element.id);
+      task.toggleStatus();
+    }
+  });
+}
+
 function renderProjectTitleInTasks(project) {
   const projectTitleDiv = document.querySelector(".project-title");
   projectTitleDiv.textContent = project.getTitle();
@@ -137,6 +152,7 @@ function createTaskDOM(taskTitle, taskIndex) {
   taskRemoveDiv.classList.add("task-remove");
 
   const taskStatus = document.createElement("input");
+  taskStatus.classList.add("task-input-status");
   taskStatus.setAttribute("type", "checkbox");
   taskStatus.setAttribute("id", `${taskIndex}`);
   taskStatusInputDiv.appendChild(taskStatus);
