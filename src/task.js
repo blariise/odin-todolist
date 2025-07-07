@@ -39,7 +39,7 @@ export default class Task {
 
   getNotes() { return this._notes; }
 
-  getIsCompleted() { return this._isCompleted; }
+  getStatus() { return this._isCompleted; }
 
   toggleStatus() {
     this._isCompleted = this._isCompleted === false ? true : false;

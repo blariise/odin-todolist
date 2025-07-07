@@ -91,7 +91,6 @@ function setProjectClickEvent() {
     const projectId = elementType.dataset.id;
     if (elementType.classList.item(0) === "project") {
       activeProjectId = projectId;
-      clearTasks();
       renderTasks(projectId);
     } else if (elementType.tagName === "svg") {
       console.log("edit");
@@ -106,11 +105,16 @@ function addTaskStatusEvent() {
     if (element.classList.item(0) === "task-title") {
       console.log("TASK");
     } else if (element.classList.item(0) === "task-input-status") {
-      const project = todoManager.getProject(activeProjectId);
-      const task = project.getTask(element.id);
-      task.toggleStatus();
+      setTaskStatus(element);
+      renderTasks(activeProjectId);
     }
   });
+}
+
+function setTaskStatus(taskInputNode) {
+  const project = todoManager.getProject(activeProjectId);
+  const task = project.getTask(taskInputNode.id);
+  task.toggleStatus();
 }
 
 function renderProjectTitleInTasks(project) {
@@ -119,6 +123,7 @@ function renderProjectTitleInTasks(project) {
 }
 
 function renderTasks(projectId) {
+  clearTasks();
   const tasksDiv = document.querySelector(".tasks");
   const tasksContainerDiv = document.createElement("div");
   tasksContainerDiv.classList.add("tasks-container");
@@ -128,7 +133,7 @@ function renderTasks(projectId) {
 
   let taskIndex = 0;
   project.getTasks().forEach((task) => {
-    const taskDiv = createTaskDOM(task.getTitle(), taskIndex);
+    const taskDiv = createTaskDOM(task, taskIndex);
     tasksContainerDiv.appendChild(taskDiv);
     ++taskIndex;
   });
@@ -137,10 +142,12 @@ function renderTasks(projectId) {
 
 function clearTasks() {
   const taskContainerDiv = document.querySelector(".tasks-container");
-  taskContainerDiv.remove();
+  if (taskContainerDiv !== null) {
+    taskContainerDiv.remove();
+  }
 }
 
-function createTaskDOM(taskTitle, taskIndex) {
+function createTaskDOM(task, taskIndex) {
   const taskDiv = document.createElement("div");
   const taskStatusInputDiv = document.createElement("div");
   const taskTitleDiv = document.createElement("div");
@@ -148,14 +155,19 @@ function createTaskDOM(taskTitle, taskIndex) {
 
   taskDiv.classList.add("task");
   taskStatusInputDiv.classList.add("task-status");
+  const statusClassName = task.getStatus() ? "completed" : "not-completed";
+  taskStatusInputDiv.classList.add(statusClassName);
   taskTitleDiv.classList.add("task-title");
   taskRemoveDiv.classList.add("task-remove");
 
   const taskStatus = document.createElement("input");
   taskStatus.classList.add("task-input-status");
   taskStatus.setAttribute("type", "checkbox");
+  taskStatus.checked = task.getStatus();
   taskStatus.setAttribute("id", `${taskIndex}`);
   taskStatusInputDiv.appendChild(taskStatus);
+
+  const taskTitle = task.getTitle();
   taskTitleDiv.textContent = taskTitle;
 
   taskDiv.appendChild(taskStatusInputDiv);
