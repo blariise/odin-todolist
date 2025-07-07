@@ -154,6 +154,12 @@
   grid-template-columns: max-content 1fr max-content;
 }
 
+.task.completed {
+  text-decoration: line-through;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 2px;
+}
+
 .task-info {
   background-color: var(--main-darker);
 }
