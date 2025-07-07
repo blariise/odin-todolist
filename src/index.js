@@ -156,7 +156,7 @@ function createTaskDOM(task, taskIndex) {
   taskDiv.classList.add("task");
   taskStatusInputDiv.classList.add("task-status");
   const statusClassName = task.getStatus() ? "completed" : "not-completed";
-  taskStatusInputDiv.classList.add(statusClassName);
+  taskDiv.classList.add(statusClassName);
   taskTitleDiv.classList.add("task-title");
   taskRemoveDiv.classList.add("task-remove");
 
