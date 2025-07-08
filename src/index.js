@@ -15,10 +15,10 @@ let activeProjectId = 0;
   renderProjects();
   renderTasks(activeProjectId);
 
-  addAddProjectEvent();
-  setProjectClickEvent();
-  addAddTaskEvent();
-  addTaskStatusEvent();
+  addProjectHandler();
+  addTaskHandler();
+  projectListHandler();
+  taskListHandler()
 })();
 
 function renderAddIcons() {
@@ -66,7 +66,7 @@ function renderProjects() {
   renderProjectIcons();
 }
 
-function addAddProjectEvent() {
+function addProjectHandler() {
   const addProjectDiv = document.querySelector(".add-input");
   addProjectDiv.addEventListener("keydown", (event) => {
     const projectTitle = document.querySelector("#project-name");
@@ -78,7 +78,7 @@ function addAddProjectEvent() {
   });
 }
 
-function addAddTaskEvent() {
+function addTaskHandler() {
   const addTaskDiv = document.querySelector(".task-add-input");
   addTaskDiv.addEventListener("keydown", (event) => {
     const taskTitle = document.querySelector("#task-title");
@@ -92,21 +92,21 @@ function addAddTaskEvent() {
   });
 }
 
-function setProjectClickEvent() {
+function projectListHandler() {
   const projectsDiv = document.querySelector(".projects-container");
   projectsDiv.addEventListener("click", (event) => {
-    const elementType = event.target;
-    const projectId = elementType.dataset.id;
-    if (elementType.classList.item(0) === "project") {
+    const element = event.target;
+    const projectId = element.dataset.id;
+    if (element.classList.item(0) === "project") {
       activeProjectId = projectId;
       renderTasks(projectId);
-    } else if (elementType.tagName === "svg") {
+    } else if (element.tagName === "svg" || element.tagName === "path") {
       console.log("edit");
     }
   });
 }
 
-function addTaskStatusEvent() {
+function taskListHandler() {
   const tasksDiv = document.querySelector(".tasks");
   tasksDiv.addEventListener("click", (event) => {
     const element = event.target;
@@ -115,6 +115,8 @@ function addTaskStatusEvent() {
     } else if (element.classList.item(0) === "task-input-status") {
       setTaskStatus(element);
       renderTasks(activeProjectId);
+    } else if (element.tagName === "svg" || element.tagName === "path") {
+      console.log("remove");
     }
   });
 }
