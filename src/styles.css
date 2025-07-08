@@ -99,7 +99,7 @@
 }
 
 .project-edit svg:hover {
-  background-color: #06050A;
+  fill: var(--red);
 }
 
 .tasks {
@@ -154,6 +154,11 @@
   grid-template-columns: max-content 1fr max-content;
 }
 
+.task:hover {
+  background-color: var(--main-dark);
+  cursor: pointer;
+}
+
 .task.completed {
   text-decoration: line-through;
   text-decoration-color: var(--red);
@@ -169,6 +174,10 @@
   fill: #FFFFFF;
   height: 70%;
   border-radius: 10px;
+}
+
+.task-remove svg:hover {
+  fill: var(--red);
 }
 
 .task-info {
