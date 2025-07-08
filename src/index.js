@@ -96,8 +96,13 @@ function projectListHandler() {
   const projectsDiv = document.querySelector(".projects-container");
   projectsDiv.addEventListener("click", (event) => {
     const element = event.target;
-    const projectId = element.dataset.id;
-    if (element.classList.item(0) === "project") {
+    const elName = element.classList.item(0);
+    if (elName === "project") {
+      const projectId = element.dataset.id;
+      activeProjectId = projectId;
+      renderTasks(projectId);
+    } else if (elName === "project-name") {
+      const projectId = element.parentElement.dataset.id;
       activeProjectId = projectId;
       renderTasks(projectId);
     } else if (element.tagName === "svg" || element.tagName === "path") {
@@ -109,14 +114,22 @@ function projectListHandler() {
 function taskListHandler() {
   const tasksDiv = document.querySelector(".tasks");
   tasksDiv.addEventListener("click", (event) => {
+    const project = todoManager.getProject(activeProjectId);
     const element = event.target;
     if (element.classList.item(0) === "task-title") {
       console.log("TASK");
     } else if (element.classList.item(0) === "task-input-status") {
       setTaskStatus(element);
       renderTasks(activeProjectId);
-    } else if (element.tagName === "svg" || element.tagName === "path") {
-      console.log("remove");
+    }
+    if (element.tagName === "svg") {
+      const taskId = element.parentNode.parentElement.dataset.id;
+      project.removeTask(taskId);
+      renderTasks(activeProjectId);
+    } else if (element.tagName === "path") {
+      const taskId = element.parentNode.parentNode.parentElement.dataset.id;
+      project.removeTask(taskId);
+      renderTasks(activeProjectId);
     }
   });
 }
