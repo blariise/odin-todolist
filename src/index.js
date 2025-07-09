@@ -96,17 +96,27 @@ function projectListHandler() {
   const projectsDiv = document.querySelector(".projects-container");
   projectsDiv.addEventListener("click", (event) => {
     const element = event.target;
-    const elName = element.classList.item(0);
-    if (elName === "project") {
-      const projectId = element.dataset.id;
+
+    let projectId = -1;
+    switch (element.classList.item(0)) {
+      case "project":
+        projectId = element.dataset.id;
+        break;
+      case "project-name":
+        projectId = element.parentElement.dataset.id;
+        break;
+    }
+
+    if (projectId !== -1 && projectId !== activeProjectId) {
       activeProjectId = projectId;
       renderTasks(projectId);
-    } else if (elName === "project-name") {
-      const projectId = element.parentElement.dataset.id;
-      activeProjectId = projectId;
-      renderTasks(projectId);
-    } else if (element.tagName === "svg" || element.tagName === "path") {
-      console.log("edit");
+    }
+
+    switch (element.tagName) {
+      case "svg":
+      case "path":
+        console.log("edit");
+        break;
     }
   });
 }
@@ -114,21 +124,51 @@ function projectListHandler() {
 function taskListHandler() {
   const tasksDiv = document.querySelector(".tasks");
   tasksDiv.addEventListener("click", (event) => {
-    const project = todoManager.getProject(activeProjectId);
     const element = event.target;
-    if (element.classList.item(0) === "task-title") {
-      console.log("TASK");
-    } else if (element.classList.item(0) === "task-input-status") {
-      setTaskStatus(element);
-      renderTasks(activeProjectId);
+
+    let isTaskSelected = false;
+    let shouldRenderTasks = false;
+    switch (element.classList.item(0)) {
+      case "task":
+      case "task-title":
+      case "task-status":
+      case "task-remove":
+        isTaskSelected = true;
+        break;
+      case "task-input-status":
+        setTaskStatus(element);
+        shouldRenderTasks = true;
+        break;
+      default:
+        break;
     }
-    if (element.tagName === "svg") {
-      const taskId = element.parentNode.parentElement.dataset.id;
-      project.removeTask(taskId);
-      renderTasks(activeProjectId);
-    } else if (element.tagName === "path") {
-      const taskId = element.parentNode.parentNode.parentElement.dataset.id;
-      project.removeTask(taskId);
+
+    let shouldDeleteTask = false;
+    let taskId = -1;
+    switch (element.tagName) {
+      case "svg":
+        shouldDeleteTask = true;
+        shouldRenderTasks = true;
+        taskId = element.parentNode.parentElement.dataset.id;
+        break;
+      case "path":
+        shouldDeleteTask = true;
+        shouldRenderTasks = true;
+        taskId = element.parentNode.parentNode.parentElement.dataset.id;
+        break;
+      default:
+        break;
+    }
+
+    if (isTaskSelected) {
+      //renderTaskInfo();
+    }
+
+    if (shouldRenderTasks) {
+      if (shouldDeleteTask) {
+        const project = todoManager.getProject(activeProjectId);
+        project.removeTask(taskId);
+      }
       renderTasks(activeProjectId);
     }
   });
@@ -199,6 +239,13 @@ function createTaskDOM(task, taskIndex) {
   taskDiv.appendChild(taskRemoveDiv);
   taskDiv.dataset.id = taskIndex;
   return taskDiv;
+}
+
+function renderTaskInfo() {
+
+}
+
+function createTaskInfoDOM() {
 }
 
 function hideIfActiveRemoved() {
