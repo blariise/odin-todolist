@@ -13,14 +13,19 @@
   --main-darker: #110E1B;
   --main-dark: #191528;
   --task-info: #3C162F;
+  --priority-low: #ADAAAA;
+  --priority-medium: #BF8A0F;
+  --priority-high: #A3081A;
+  --status-not-completed: var(--priority-low);
+  --status-completed: #13F235;
 }
 
 .container {
   height: 100vh;
   display: grid;
   grid-template-columns: max-content
-                         minmax(max-content, 500px)
-                         minmax(max-content, 800px);
+                         minmax(250px, 500px)
+                         minmax(250px, 500px);
   color: var(--text-color);
   background-color: var(--main-darker);
 
@@ -181,6 +186,20 @@
 }
 
 .task-info {
+  display: grid;
+  grid-template-rows: max-content max-content 1fr;
+  gap: 29px;
   background-color: var(--main-darker);
+}
+
+.task-info-title {
+  justify-self: center;
+  font-size: 1.2rem;
+}
+
+.task-info-status-data {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  justify-items: center;
 }
 

@@ -109,6 +109,7 @@ function projectListHandler() {
 
     if (projectId !== -1 && projectId !== activeProjectId) {
       activeProjectId = projectId;
+      clearTaskInfo();
       renderTasks(projectId);
     }
 
@@ -128,12 +129,17 @@ function taskListHandler() {
 
     let isTaskSelected = false;
     let shouldRenderTasks = false;
+    let taskId = -1;
     switch (element.classList.item(0)) {
       case "task":
+        isTaskSelected = true;
+        taskId = element.dataset.id;
+        break;
       case "task-title":
       case "task-status":
       case "task-remove":
         isTaskSelected = true;
+        taskId = element.parentElement.dataset.id;
         break;
       case "task-input-status":
         setTaskStatus(element);
@@ -144,7 +150,6 @@ function taskListHandler() {
     }
 
     let shouldDeleteTask = false;
-    let taskId = -1;
     switch (element.tagName) {
       case "svg":
         shouldDeleteTask = true;
@@ -161,7 +166,8 @@ function taskListHandler() {
     }
 
     if (isTaskSelected) {
-      //renderTaskInfo();
+      const project = todoManager.getProject(activeProjectId);
+      renderTaskInfo(taskId, project);
     }
 
     if (shouldRenderTasks) {
@@ -241,15 +247,100 @@ function createTaskDOM(task, taskIndex) {
   return taskDiv;
 }
 
-function renderTaskInfo() {
+function renderTaskInfo(taskId, project) {
+  clearTaskInfo();
+  const container = document.querySelector(".container");
+  const taskInfoDOM = createTaskInfoDOM();
+  container.appendChild(taskInfoDOM);
 
+  const task = project.getTask(taskId);
+  renderTaskTitleInTaskInfo(task, project);
+
+  renderTaskStatusContent(task);
+  renderTaskPriorityContent(task);
+  renderTaskDateContent(task);
+}
+
+function renderTaskStatusContent(task) {
+  const statusText = task.getStatus() ? "completed" : "not-completed";
+  const statusDiv = document.querySelector(".task-info-completion-status");
+  statusDiv.textContent = statusText;
+  setElementColor(statusDiv, `--status-${statusText}`);
+}
+
+function renderTaskPriorityContent(task) {
+  let priorityText = "";
+  switch (task.getPriority()) {
+    case 0:
+      priorityText = "low";
+      break;
+    case 1:
+      priorityText = "medium";
+      break;
+    case 2:
+      priorityText = "high";
+      break;
+    default:
+      priorityText = "default";
+      break;
+  }
+  const priorityDiv = document.querySelector(".task-info-priority");
+  priorityDiv.textContent = priorityText;
+  setElementColor(priorityDiv, `--priority-${priorityText}`);
+}
+
+function renderTaskDateContent(task) {
+  const dateDiv = document.querySelector(".task-info-date");
+  const dateText = task.getDueDate() ? task.getDate() : "--/--/----";
+  dateDiv.textContent = dateText;
+}
+
+function clearTaskInfo() {
+  const taskInfoDiv = document.querySelector(".task-info");
+  if (taskInfoDiv !== null) {
+    taskInfoDiv.remove();
+  }
 }
 
 function createTaskInfoDOM() {
+  const taskInfoDiv = document.createElement("div");
+  const taskStatusDataDiv = document.createElement("div");
+  const titleDiv = document.createElement("div");
+  const statusDiv = document.createElement("div");
+  const dueDateDiv = document.createElement("div");
+  const priorityDiv = document.createElement("div");
+  const descriptionDiv = document.createElement("div");
+
+  taskInfoDiv.classList.add("task-info");
+  taskStatusDataDiv.classList.add("task-info-status-data");
+  titleDiv.classList.add("task-info-title");
+  statusDiv.classList.add("task-info-completion-status");
+  dueDateDiv.classList.add("task-info-date");
+  priorityDiv.classList.add("task-info-priority");
+  descriptionDiv.classList.add("task-info-description");
+
+  taskInfoDiv.appendChild(titleDiv);
+  taskStatusDataDiv.appendChild(statusDiv);
+  taskStatusDataDiv.appendChild(priorityDiv);
+  taskStatusDataDiv.appendChild(dueDateDiv);
+  taskInfoDiv.appendChild(taskStatusDataDiv);
+  taskInfoDiv.appendChild(descriptionDiv);
+  return taskInfoDiv;
+}
+
+function renderTaskTitleInTaskInfo(task, project) {
+  const taskTitleDiv = document.querySelector(".task-info-title");
+  taskTitleDiv.textContent = task.getTitle();
 }
 
 function hideIfActiveRemoved() {
   activeProjectId = -1;
   const tasksDiv = document.querySelector(".tasks");
   tasksDiv.classList.add("hidden");
+}
+
+function setElementColor(element, color) {
+  const rootStyle = getComputedStyle(document.documentElement);
+  const textColor = rootStyle.getPropertyValue(color).trim();
+  element.style.color = textColor;
 }
