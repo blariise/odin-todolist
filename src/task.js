@@ -40,5 +40,12 @@ export default class Task {
   toggleStatus() {
     this._isCompleted = this._isCompleted === false ? true : false;
   }
+
+  togglePriority() {
+    this._priority += 1;
+    if (this._priority > 2) {
+      this._priority = 0;
+    }
+  }
 }
 

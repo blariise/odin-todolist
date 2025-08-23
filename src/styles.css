@@ -97,13 +97,13 @@
   cursor: pointer;
 }
 
-.project-edit svg {
+.project-remove svg {
   fill: #FFFFFF;
   height: 100%;
   border-radius: 10px;
 }
 
-.project-edit svg:hover {
+.project-remove svg:hover {
   fill: var(--red);
 }
 
@@ -201,5 +201,22 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   justify-items: center;
+}
+
+.task-info-description textarea {
+  resize: none;
+  background-color: var(--main-darker);
+  color: var(--text-color);
+  border: none;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  font-family: "TexGyreHeros";
+}
+
+.task-info-completion-status:hover,
+.task-info-priority:hover,
+.task-info-date:hover {
+  cursor: pointer;
 }
 
