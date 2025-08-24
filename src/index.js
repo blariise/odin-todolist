@@ -127,6 +127,7 @@ function projectListHandler() {
     }
     if (shouldRenderProjectInfo && (document.querySelector(".project-title") == null)) {
       renderProjectInfo();
+      addTaskHandler();
     }
 
     if (projectId !== -1 && projectId !== activeProjectId) {
@@ -151,7 +152,6 @@ function projectListHandler() {
     if ((projectId == activeProjectId) && removed) {
       activeProjectId = -1;
       clearTasks();
-      console.log("remove and clear");
       todoManager.removeProject(projectId);
       clearProjectInfoDOM();
       renderProjects();
