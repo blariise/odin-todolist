@@ -7,6 +7,7 @@ import TodoManager from "./todomanager.js";
 /*
  * INIT PAGE
 */
+
 const todoManager = new TodoManager();
 let activeProjectId = 0;
 (() => {
@@ -22,6 +23,10 @@ let activeProjectId = 0;
   taskListHandler();
   taskInfoHandler();
 })();
+
+/*
+ * RENDER ICONS
+*/
 
 function renderAddIcons() {
   const addIconDivs = document.querySelectorAll(".add-icon");
@@ -44,12 +49,9 @@ function renderDeleteIcons() {
   });
 }
 
-function clearProjects() {
-  const projectsDiv = document.querySelector(".projects-container");
-  while (projectsDiv.firstChild) {
-    projectsDiv.removeChild(projectsDiv.firstChild);
-  }
-}
+/*
+ * CREATE DOM
+*/
 
 function createProjectDOM(project) {
   const projectDiv = document.createElement("div");
@@ -67,6 +69,120 @@ function createProjectDOM(project) {
   return projectDiv;
 }
 
+function createAddTaskDOM() {
+  const addTaskDiv = document.createElement("div");
+  const addIconDiv = document.createElement("div");
+  const taskAddInputDiv = document.createElement("div");
+
+  addTaskDiv.classList.add("add-task");
+  addIconDiv.classList.add("add-icon");
+  taskAddInputDiv.classList.add("task-add-input");
+
+  const input = document.createElement("input");
+  input.setAttribute("type", "text");
+  input.setAttribute("id", "task-title");
+  input.setAttribute("minlength", "0");
+  input.setAttribute("maxlength", "30");
+  input.setAttribute("placeholder", "Add Task");
+  taskAddInputDiv.appendChild(input);
+
+  addTaskDiv.appendChild(addIconDiv);
+  addTaskDiv.appendChild(taskAddInputDiv);
+  return addTaskDiv;
+}
+
+function createTaskDOM(task, taskIndex) {
+  const taskDiv = document.createElement("div");
+  const taskStatusInputDiv = document.createElement("div");
+  const taskTitleDiv = document.createElement("div");
+  const taskRemoveDiv = document.createElement("div");
+
+  taskDiv.classList.add("task");
+  taskStatusInputDiv.classList.add("task-status");
+  const statusClassName = task.getStatus() ? "completed" : "not-completed";
+  taskDiv.classList.add(statusClassName);
+  taskTitleDiv.classList.add("task-title");
+  taskRemoveDiv.classList.add("task-remove");
+
+  const taskStatus = document.createElement("input");
+  taskStatus.classList.add("task-input-status");
+  taskStatus.setAttribute("type", "checkbox");
+  taskStatus.checked = task.getStatus();
+  taskStatus.setAttribute("id", `${taskIndex}`);
+  taskStatusInputDiv.appendChild(taskStatus);
+
+  const taskTitle = task.getTitle();
+  taskTitleDiv.textContent = taskTitle;
+
+  taskDiv.appendChild(taskStatusInputDiv);
+  taskDiv.appendChild(taskTitleDiv);
+  taskDiv.appendChild(taskRemoveDiv);
+  taskDiv.dataset.id = taskIndex;
+  return taskDiv;
+}
+
+function createTaskInfoDOM() {
+  const taskStatusDataDiv = document.createElement("div");
+  const titleDiv = document.createElement("div");
+  const statusDiv = document.createElement("div");
+  const dueDateDiv = document.createElement("div");
+  const priorityDiv = document.createElement("div");
+  const descriptionDiv = document.createElement("div");
+
+  titleDiv.classList.add("task-info-title");
+  taskStatusDataDiv.classList.add("task-info-status-data");
+  descriptionDiv.classList.add("task-info-description");
+
+  statusDiv.classList.add("task-info-completion-status");
+  priorityDiv.classList.add("task-info-priority");
+  dueDateDiv.classList.add("task-info-date");
+
+  const descriptionInput = document.createElement("textarea");
+  descriptionInput.setAttribute("id", "description-input");
+  descriptionDiv.appendChild(descriptionInput);
+
+  taskStatusDataDiv.appendChild(statusDiv);
+  taskStatusDataDiv.appendChild(priorityDiv);
+  taskStatusDataDiv.appendChild(dueDateDiv);
+  return [ titleDiv, taskStatusDataDiv, descriptionDiv ];
+}
+
+/*
+ * CLEAR DOM
+*/
+
+function clearProjects() {
+  const projectsDiv = document.querySelector(".projects-container");
+  while (projectsDiv.firstChild) {
+    projectsDiv.removeChild(projectsDiv.firstChild);
+  }
+}
+
+function clearProjectInfoDOM() {
+  const tasksDiv = document.querySelector(".tasks");
+  while (tasksDiv.firstChild) {
+    tasksDiv.removeChild(tasksDiv.firstChild);
+  }
+}
+
+function clearTasks() {
+  const taskContainerDiv = document.querySelector(".tasks-container");
+  if (taskContainerDiv !== null) {
+    taskContainerDiv.remove();
+  }
+}
+
+function clearTaskInfo() {
+  const taskInfoDiv = document.querySelector(".task-info");
+  while (taskInfoDiv.firstChild) {
+    taskInfoDiv.removeChild(taskInfoDiv.firstChild);
+  }
+}
+
+/*
+ * RENDER
+*/
+
 function renderProjects() {
   clearProjects();
   const projectsDiv = document.querySelector(".projects-container");
@@ -82,6 +198,106 @@ function renderProjects() {
   });
   renderProjectIcons();
 }
+
+function renderProjectTitleInTasks(projectId) {
+  const projectTitleDiv = document.querySelector(".project-title");
+  projectTitleDiv.textContent = todoManager.getProject(projectId).getTitle();
+}
+
+function renderTasks(projectId) {
+  clearTasks();
+  const tasksDiv = document.querySelector(".tasks");
+  const tasksContainerDiv = document.createElement("div");
+  tasksContainerDiv.classList.add("tasks-container");
+
+  const project = todoManager.getProject(projectId);
+
+  let taskIndex = 0;
+  project.getTasks().forEach((task) => {
+    const taskDiv = createTaskDOM(task, taskIndex);
+    tasksContainerDiv.appendChild(taskDiv);
+    ++taskIndex;
+  });
+  tasksDiv.appendChild(tasksContainerDiv);
+  renderDeleteIcons();
+}
+
+function renderTaskInfo(taskId, project) {
+  clearTaskInfo();
+  const container = document.querySelector(".task-info");
+  container.dataset.id = taskId;
+  const [taskTitleDiv, taskStatusDiv, taskDescriptionDiv] = createTaskInfoDOM();
+  container.appendChild(taskTitleDiv);
+  container.appendChild(taskStatusDiv);
+  container.appendChild(taskDescriptionDiv);
+
+  const task = project.getTask(taskId);
+  renderTaskTitleInTaskInfo(task, project);
+
+  renderTaskInfoStatusContent(task);
+  renderTaskInfoPriorityContent(task);
+  renderTaskInfoDateContent(task);
+  renderTaskInfoDescription(task);
+}
+
+function renderTaskInfoStatusContent(task) {
+  const statusText = task.getStatus() ? "completed" : "not-completed";
+  const statusDiv = document.querySelector(".task-info-completion-status");
+  statusDiv.textContent = statusText;
+  setElementColor(statusDiv, `--status-${statusText}`);
+}
+
+function renderTaskInfoPriorityContent(task) {
+  let priorityText = "";
+  switch (task.getPriority()) {
+    case 0:
+      priorityText = "low";
+      break;
+    case 1:
+      priorityText = "medium";
+      break;
+    case 2:
+      priorityText = "high";
+      break;
+    default:
+      priorityText = "default";
+      break;
+  }
+  const priorityDiv = document.querySelector(".task-info-priority");
+  priorityDiv.textContent = priorityText;
+  setElementColor(priorityDiv, `--priority-${priorityText}`);
+}
+
+function renderTaskInfoDateContent(task) {
+  const dateDiv = document.querySelector(".task-info-date");
+  const dateText = task.getDueDate() ? task.getDate() : "--/--/----";
+  dateDiv.textContent = dateText;
+}
+
+function renderTaskInfoDescription(task) {
+  const description = task.getDescription();
+}
+
+function renderProjectInfo() {
+  const pl = document.querySelector(".tasks");
+  const titleDiv = document.createElement("div");
+  titleDiv.classList.add("project-title");
+  const xd = createAddTaskDOM();
+  pl.appendChild(titleDiv);
+  pl.appendChild(xd);
+
+  renderProjectTitleInTasks(activeProjectId);
+  renderAddIcons();
+}
+
+function renderTaskTitleInTaskInfo(task, project) {
+  const taskTitleDiv = document.querySelector(".task-info-title");
+  taskTitleDiv.textContent = task.getTitle();
+}
+
+/*
+ * EVENT HANDLERS
+*/
 
 function addProjectHandler() {
   const addProjectDiv = document.querySelector(".add-input");
@@ -261,205 +477,14 @@ function taskInfoHandler() {
   });
 }
 
+/*
+ * HELPERS
+*/
+
 function setTaskStatus(taskId) {
   const project = todoManager.getProject(activeProjectId);
   const task = project.getTask(taskId);
   task.toggleStatus();
-}
-
-function renderProjectTitleInTasks(projectId) {
-  const projectTitleDiv = document.querySelector(".project-title");
-  projectTitleDiv.textContent = todoManager.getProject(projectId).getTitle();
-}
-
-function renderTasks(projectId) {
-  clearTasks();
-  const tasksDiv = document.querySelector(".tasks");
-  const tasksContainerDiv = document.createElement("div");
-  tasksContainerDiv.classList.add("tasks-container");
-
-  const project = todoManager.getProject(projectId);
-
-  let taskIndex = 0;
-  project.getTasks().forEach((task) => {
-    const taskDiv = createTaskDOM(task, taskIndex);
-    tasksContainerDiv.appendChild(taskDiv);
-    ++taskIndex;
-  });
-  tasksDiv.appendChild(tasksContainerDiv);
-  renderDeleteIcons();
-}
-
-function clearTasks() {
-  const taskContainerDiv = document.querySelector(".tasks-container");
-  if (taskContainerDiv !== null) {
-    taskContainerDiv.remove();
-  }
-}
-
-function renderProjectInfo() {
-  const pl = document.querySelector(".tasks");
-  const titleDiv = document.createElement("div");
-  titleDiv.classList.add("project-title");
-  const xd = createAddTaskDOM();
-  pl.appendChild(titleDiv);
-  pl.appendChild(xd);
-
-  renderProjectTitleInTasks(activeProjectId);
-  renderAddIcons();
-}
-
-function clearProjectInfoDOM() {
-  const tasksDiv = document.querySelector(".tasks");
-  while (tasksDiv.firstChild) {
-    tasksDiv.removeChild(tasksDiv.firstChild);
-  }
-}
-
-function createAddTaskDOM() {
-  const addTaskDiv = document.createElement("div");
-  const addIconDiv = document.createElement("div");
-  const taskAddInputDiv = document.createElement("div");
-
-  addTaskDiv.classList.add("add-task");
-  addIconDiv.classList.add("add-icon");
-  taskAddInputDiv.classList.add("task-add-input");
-
-  const input = document.createElement("input");
-  input.setAttribute("type", "text");
-  input.setAttribute("id", "task-title");
-  input.setAttribute("minlength", "0");
-  input.setAttribute("maxlength", "30");
-  input.setAttribute("placeholder", "Add Task");
-  taskAddInputDiv.appendChild(input);
-
-  addTaskDiv.appendChild(addIconDiv);
-  addTaskDiv.appendChild(taskAddInputDiv);
-  return addTaskDiv;
-}
-
-function createTaskDOM(task, taskIndex) {
-  const taskDiv = document.createElement("div");
-  const taskStatusInputDiv = document.createElement("div");
-  const taskTitleDiv = document.createElement("div");
-  const taskRemoveDiv = document.createElement("div");
-
-  taskDiv.classList.add("task");
-  taskStatusInputDiv.classList.add("task-status");
-  const statusClassName = task.getStatus() ? "completed" : "not-completed";
-  taskDiv.classList.add(statusClassName);
-  taskTitleDiv.classList.add("task-title");
-  taskRemoveDiv.classList.add("task-remove");
-
-  const taskStatus = document.createElement("input");
-  taskStatus.classList.add("task-input-status");
-  taskStatus.setAttribute("type", "checkbox");
-  taskStatus.checked = task.getStatus();
-  taskStatus.setAttribute("id", `${taskIndex}`);
-  taskStatusInputDiv.appendChild(taskStatus);
-
-  const taskTitle = task.getTitle();
-  taskTitleDiv.textContent = taskTitle;
-
-  taskDiv.appendChild(taskStatusInputDiv);
-  taskDiv.appendChild(taskTitleDiv);
-  taskDiv.appendChild(taskRemoveDiv);
-  taskDiv.dataset.id = taskIndex;
-  return taskDiv;
-}
-
-function renderTaskInfo(taskId, project) {
-  clearTaskInfo();
-  const container = document.querySelector(".task-info");
-  container.dataset.id = taskId;
-  const [taskTitleDiv, taskStatusDiv, taskDescriptionDiv] = createTaskInfoDOM();
-  container.appendChild(taskTitleDiv);
-  container.appendChild(taskStatusDiv);
-  container.appendChild(taskDescriptionDiv);
-
-  const task = project.getTask(taskId);
-  renderTaskTitleInTaskInfo(task, project);
-
-  renderTaskInfoStatusContent(task);
-  renderTaskInfoPriorityContent(task);
-  renderTaskInfoDateContent(task);
-  renderTaskInfoDescription(task);
-}
-
-function renderTaskInfoStatusContent(task) {
-  const statusText = task.getStatus() ? "completed" : "not-completed";
-  const statusDiv = document.querySelector(".task-info-completion-status");
-  statusDiv.textContent = statusText;
-  setElementColor(statusDiv, `--status-${statusText}`);
-}
-
-function renderTaskInfoPriorityContent(task) {
-  let priorityText = "";
-  switch (task.getPriority()) {
-    case 0:
-      priorityText = "low";
-      break;
-    case 1:
-      priorityText = "medium";
-      break;
-    case 2:
-      priorityText = "high";
-      break;
-    default:
-      priorityText = "default";
-      break;
-  }
-  const priorityDiv = document.querySelector(".task-info-priority");
-  priorityDiv.textContent = priorityText;
-  setElementColor(priorityDiv, `--priority-${priorityText}`);
-}
-
-function renderTaskInfoDateContent(task) {
-  const dateDiv = document.querySelector(".task-info-date");
-  const dateText = task.getDueDate() ? task.getDate() : "--/--/----";
-  dateDiv.textContent = dateText;
-}
-
-function renderTaskInfoDescription(task) {
-  const description = task.getDescription();
-}
-
-function clearTaskInfo() {
-  const taskInfoDiv = document.querySelector(".task-info");
-  while (taskInfoDiv.firstChild) {
-    taskInfoDiv.removeChild(taskInfoDiv.firstChild);
-  }
-}
-
-function createTaskInfoDOM() {
-  const taskStatusDataDiv = document.createElement("div");
-  const titleDiv = document.createElement("div");
-  const statusDiv = document.createElement("div");
-  const dueDateDiv = document.createElement("div");
-  const priorityDiv = document.createElement("div");
-  const descriptionDiv = document.createElement("div");
-
-  titleDiv.classList.add("task-info-title");
-  taskStatusDataDiv.classList.add("task-info-status-data");
-  descriptionDiv.classList.add("task-info-description");
-
-  statusDiv.classList.add("task-info-completion-status");
-  priorityDiv.classList.add("task-info-priority");
-  dueDateDiv.classList.add("task-info-date");
-
-  const descriptionInput = document.createElement("textarea");
-  descriptionInput.setAttribute("id", "description-input");
-  descriptionDiv.appendChild(descriptionInput);
-
-  taskStatusDataDiv.appendChild(statusDiv);
-  taskStatusDataDiv.appendChild(priorityDiv);
-  taskStatusDataDiv.appendChild(dueDateDiv);
-  return [ titleDiv, taskStatusDataDiv, descriptionDiv ];
-}
-
-function renderTaskTitleInTaskInfo(task, project) {
-  const taskTitleDiv = document.querySelector(".task-info-title");
-  taskTitleDiv.textContent = task.getTitle();
 }
 
 function hideIfActiveRemoved() {
