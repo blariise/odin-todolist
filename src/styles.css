@@ -220,3 +220,10 @@
   cursor: pointer;
 }
 
+#task-date {
+  background-color: var(--main-darker);
+  border: none;
+  color: var(--text-color);
+  color-scheme: dark;
+}
+
