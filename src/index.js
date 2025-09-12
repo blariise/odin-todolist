@@ -286,7 +286,12 @@ function renderTaskInfoDateContent(task) {
 }
 
 function renderTaskInfoDescription(task) {
+  taskDescriptionHandler();
   const description = task.getDescription();
+  const descriptionDiv = document.querySelector("#description-input");
+  if (description !== undefined) {
+    descriptionDiv.value = description;
+  }
 }
 
 function renderProjectInfo() {
@@ -477,11 +482,11 @@ function taskInfoHandler() {
         break;
       case "task-info-date":
         shouldRenderTaskInfo = true;
-        console.log("c");
         break;
       default:
         break;
     }
+
     if (shouldRenderTaskInfo) {
       renderTaskInfo(taskId, project);
     }
@@ -496,6 +501,15 @@ function taskDateHandler() {
     console.log(dateDiv.valueAsNumber);
     const date = new Date(dateDiv.valueAsNumber);
     task.setDueDate(date);
+  });
+}
+
+function taskDescriptionHandler() {
+  const taskId = document.querySelector(".task-info").dataset.id;
+  const task = todoManager.getProject(activeProjectId).getTask(taskId);
+  const description = document.querySelector("#description-input");
+  description.addEventListener("change", (event) => {
+    task.setDescription(description.value);
   });
 }
 
