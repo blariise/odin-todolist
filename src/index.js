@@ -4,6 +4,8 @@ import editIcon from "./dots-vertical.svg";
 import deleteIcon from "./delete.svg";
 import TodoManager from "./todomanager.js";
 
+import { isDate, formatISO, format } from "date-fns";
+
 /*
  * INIT PAGE
 */
@@ -82,7 +84,7 @@ function createAddTaskDOM() {
   input.setAttribute("type", "text");
   input.setAttribute("id", "task-title");
   input.setAttribute("minlength", "0");
-  input.setAttribute("maxlength", "30");
+  input.setAttribute("maxlength", "20");
   input.setAttribute("placeholder", "Add Task");
   taskAddInputDiv.appendChild(input);
 
@@ -136,6 +138,11 @@ function createTaskInfoDOM() {
   statusDiv.classList.add("task-info-completion-status");
   priorityDiv.classList.add("task-info-priority");
   dueDateDiv.classList.add("task-info-date");
+
+  const dateInput = document.createElement("input");
+  dateInput.setAttribute("type", "date");
+  dateInput.setAttribute("id", "task-date");
+  dueDateDiv.appendChild(dateInput);
 
   const descriptionInput = document.createElement("textarea");
   descriptionInput.setAttribute("id", "description-input");
@@ -269,9 +276,13 @@ function renderTaskInfoPriorityContent(task) {
 }
 
 function renderTaskInfoDateContent(task) {
-  const dateDiv = document.querySelector(".task-info-date");
-  const dateText = task.getDueDate() ? task.getDate() : "--/--/----";
-  dateDiv.textContent = dateText;
+  taskDateHandler();
+  const dateDiv = document.querySelector("#task-date");
+  const date = task.getDueDate();
+  if (date !== undefined) {
+    const dateFormatted = format(date, "yyyy-MM-dd");
+    dateDiv.value = dateFormatted;
+  }
 }
 
 function renderTaskInfoDescription(task) {
@@ -474,6 +485,17 @@ function taskInfoHandler() {
     if (shouldRenderTaskInfo) {
       renderTaskInfo(taskId, project);
     }
+  });
+}
+
+function taskDateHandler() {
+  const taskId = document.querySelector(".task-info").dataset.id;
+  const task = todoManager.getProject(activeProjectId).getTask(taskId);
+  const dateDiv = document.querySelector("#task-date");
+  dateDiv.addEventListener("change", (event) => {
+    console.log(dateDiv.valueAsNumber);
+    const date = new Date(dateDiv.valueAsNumber);
+    task.setDueDate(date);
   });
 }
 
