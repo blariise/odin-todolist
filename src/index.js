@@ -387,6 +387,7 @@ function projectListHandler() {
       todoManager.removeProject(projectId);
       clearProjectInfoDOM();
       renderProjects();
+      clearTaskInfo();
     } else if (removed) {
       todoManager.removeProject(projectId);
       renderProjects();
