@@ -11,6 +11,8 @@ import { isDate, formatISO, format } from "date-fns";
 */
 
 let todoManager;
+let activeProjectId = 0;
+
 if (localStorage.getItem("localTodoManager")) {
   todoManager = new TodoManager();
   populate();
@@ -19,13 +21,14 @@ if (localStorage.getItem("localTodoManager")) {
   todoManager.addProject("Default");
   updateLocalStorage();
 }
-let activeProjectId = 0;
 
 (() => {
   renderAddIcons();
   renderProjects();
-  renderProjectInfo(activeProjectId);
-  renderTasks(activeProjectId);
+  if (todoManager.getProjects().length != 0) {
+    renderProjectInfo(activeProjectId);
+    renderTasks(activeProjectId);
+  }
 
   addProjectHandler();
   addTaskHandler();
@@ -33,6 +36,7 @@ let activeProjectId = 0;
   taskListHandler();
   taskInfoHandler();
 })();
+
 
 /*
  * RENDER ICONS
@@ -338,17 +342,19 @@ function addProjectHandler() {
 
 function addTaskHandler() {
   const addTaskDiv = document.querySelector(".task-add-input");
-  addTaskDiv.addEventListener("keydown", (event) => {
-    const taskTitle = document.querySelector("#task-title");
-    if (event.key === "Enter" && taskTitle.value !== "") {
-      const project = todoManager.getProject(activeProjectId);
-      project.addTask(taskTitle.value);
-      updateLocalStorage();
-      taskTitle.value = "";
-      clearTasks();
-      renderTasks(activeProjectId);
-    }
-  });
+  if (addTaskDiv !== null) {
+    addTaskDiv.addEventListener("keydown", (event) => {
+      const taskTitle = document.querySelector("#task-title");
+      if (event.key === "Enter" && taskTitle.value !== "") {
+        const project = todoManager.getProject(activeProjectId);
+        project.addTask(taskTitle.value);
+        updateLocalStorage();
+        taskTitle.value = "";
+        clearTasks();
+        renderTasks(activeProjectId);
+      }
+    });
+  }
 }
 
 function projectListHandler() {
