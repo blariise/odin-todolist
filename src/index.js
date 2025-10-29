@@ -15,6 +15,7 @@ let activeProjectId = 0;
 (() => {
   renderAddIcons();
   todoManager.addProject("Default");
+  updateLocalStorage();
   renderProjects();
   renderProjectInfo(activeProjectId);
   renderTasks(activeProjectId);
@@ -321,6 +322,7 @@ function addProjectHandler() {
     const projectTitle = document.querySelector("#project-name");
     if (event.key === "Enter" && projectTitle.value !== "") {
       todoManager.addProject(projectTitle.value);
+      updateLocalStorage();
       projectTitle.value = "";
       renderProjects();
     }
@@ -334,6 +336,7 @@ function addTaskHandler() {
     if (event.key === "Enter" && taskTitle.value !== "") {
       const project = todoManager.getProject(activeProjectId);
       project.addTask(taskTitle.value);
+      updateLocalStorage();
       taskTitle.value = "";
       clearTasks();
       renderTasks(activeProjectId);
@@ -385,11 +388,13 @@ function projectListHandler() {
       activeProjectId = -1;
       clearTasks();
       todoManager.removeProject(projectId);
+      updateLocalStorage();
       clearProjectInfoDOM();
       renderProjects();
       clearTaskInfo();
     } else if (removed) {
       todoManager.removeProject(projectId);
+      updateLocalStorage();
       renderProjects();
     }
     activeProjectId = projectId;
@@ -454,6 +459,7 @@ function taskListHandler() {
       if (shouldDeleteTask) {
         const project = todoManager.getProject(activeProjectId);
         project.removeTask(taskId);
+        updateLocalStorage();
         if (isTaskInfoRendered || project.getTasks().length === 0) {
           clearTaskInfo();
         }
@@ -487,6 +493,7 @@ function taskInfoHandler() {
       default:
         break;
     }
+    updateLocalStorage();
 
     if (shouldRenderTaskInfo) {
       renderTaskInfo(taskId, project);
@@ -534,4 +541,8 @@ function setElementColor(element, color) {
   const rootStyle = getComputedStyle(document.documentElement);
   const textColor = rootStyle.getPropertyValue(color).trim();
   element.style.color = textColor;
+}
+
+function updateLocalStorage() {
+  localStorage.setItem("todoManager", JSON.stringify(todoManager));
 }
