@@ -10,12 +10,19 @@ import { isDate, formatISO, format } from "date-fns";
  * INIT PAGE
 */
 
-const todoManager = new TodoManager();
-let activeProjectId = 0;
-(() => {
-  renderAddIcons();
+let todoManager;
+if (localStorage.getItem("localTodoManager")) {
+  todoManager = new TodoManager();
+  populate();
+} else {
+  todoManager = new TodoManager();
   todoManager.addProject("Default");
   updateLocalStorage();
+}
+let activeProjectId = 0;
+
+(() => {
+  renderAddIcons();
   renderProjects();
   renderProjectInfo(activeProjectId);
   renderTasks(activeProjectId);
@@ -425,6 +432,7 @@ function taskListHandler() {
       case "task-input-status":
         taskId = element.id;
         setTaskStatus(element.id);
+        updateLocalStorage();
         shouldRenderTasks = true;
         break;
       default:
@@ -493,7 +501,6 @@ function taskInfoHandler() {
       default:
         break;
     }
-    updateLocalStorage();
 
     if (shouldRenderTaskInfo) {
       renderTaskInfo(taskId, project);
@@ -509,6 +516,7 @@ function taskDateHandler() {
     console.log(dateDiv.valueAsNumber);
     const date = new Date(dateDiv.valueAsNumber);
     task.setDueDate(date);
+    updateLocalStorage();
   });
 }
 
@@ -518,6 +526,7 @@ function taskDescriptionHandler() {
   const description = document.querySelector("#description-input");
   description.addEventListener("change", (event) => {
     task.setDescription(description.value);
+    updateLocalStorage();
   });
 }
 
@@ -544,5 +553,26 @@ function setElementColor(element, color) {
 }
 
 function updateLocalStorage() {
-  localStorage.setItem("todoManager", JSON.stringify(todoManager));
+  localStorage.setItem("localTodoManager", JSON.stringify(todoManager));
+}
+
+function populate() {
+  const lTodoM = JSON.parse(localStorage.getItem("localTodoManager"));
+  if (lTodoM) {
+    let projectId = 0;
+    let taskId = 0;
+    lTodoM._projects.forEach((project) => {
+      todoManager.addProject(project._title);
+      project._tasks.forEach((task) => {
+        todoManager.getProject(projectId).addTask(task._title);
+        const tempTask = todoManager.getProject(projectId).getTask(taskId);
+        tempTask.setDescription(task._description);
+        tempTask.setDueDate(task._dueDate);
+        tempTask.setCompletion(task._isCompleted);
+        tempTask.setPriority(task._priority);
+        taskId++;
+      });
+      projectId++;
+    });
+  }
 }
